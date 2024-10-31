@@ -10,7 +10,7 @@
 
 #### Image Upload
 
-**Endpoint:** `/images`  
+**Endpoint:** `/image`  
 
 **Method:** `POST`  
 
@@ -27,22 +27,24 @@
 
 - **Status Code:** `202 Accepted`
 - **Body:**
-  
+
   ```json
   {
-  "processed_image_id": integer
+    "processed_image_id": integer
   }
   ```
+
+- **Status Code:** `413 Payload Too Large` (if the uploaded image exceeds the allowed size limit).
 
 **Example Request:**
 
 ```http
-POST /images
+POST /image
 ```
 
 #### Image Download
 
-**Endpoint:** `/images/{image_id}`  
+**Endpoint:** `/image/{image_id}`  
 
 **Method:** `GET`  
 
@@ -55,21 +57,21 @@ POST /images
 **Response:**
 
 - **Status Code:** `200 OK` (if the image ID exists)
-  - **Body:** The processed image file in the response body.
+- **Body:** The processed image file in the response body.
 - **Status Code:** `202 Accepted` (if the image has not been processed yet).
 - **Status Code:** `404 Not Found` (if the image ID does not exist).
 
 **Example Request:**
 
 ```http
-GET /images/15
+GET /image/15
 ```
 
 ### Sights Information
 
 #### Sights Information List
 
-**Endpoint:** `/sights`  
+**Endpoint:** `/sight`  
 
 **Method:** `GET`  
 
@@ -79,7 +81,7 @@ GET /images/15
 
 - **Status Code:** `200 OK`
 - **Body:**
-  
+
   ```json
   {
     "sights": [
@@ -95,12 +97,12 @@ GET /images/15
 **Example Request:**
 
 ```http
-GET /sights
+GET /sight
 ```
 
 #### Sight Information Retrieval
 
-**Endpoint:** `/sights/{sight_id}`  
+**Endpoint:** `/sight/{sight_id}`  
 
 **Method:** `GET`  
 
@@ -114,7 +116,7 @@ GET /sights
 
 - **Status Code:** `200 OK`
 - **Body:**
-  
+
   ```json
   {
     "sight_id": "string",
@@ -128,7 +130,7 @@ GET /sights
 **Example Request:**
 
 ```http
-GET /sights/15
+GET /sight/15
 ```
 
 ### AI Copywriting
@@ -139,20 +141,20 @@ GET /sights/15
 
 **Method:** `POST`  
 
-**Description:** Initiates the generation of copywriting based on styles.
+**Description:** Initiates the generation of copywriting based on prompt.
 
 **Request:**
 
 - **Headers:**
-  
   - `Content-Type: application/json`
+
 - **Body:**
-  
+
   ```json
   {
     "name": "string",
     "description": "string",
-    "style": "string"
+    "prompt": "string"
   }
   ```
 
@@ -174,7 +176,7 @@ POST /copywriting
 {
   "name": "Sunset",
   "description": "A beautiful sunset over the ocean with waves crashing onto the shore.",
-  "style": "tiktok"
+  "prompt": "Write an engaging and eye-catching caption for a Xiaohongshu post. The caption should be short, relatable, and appeal to a young, trend-conscious audience. Use a warm and conversational tone, and include emojis to add personality. Add a few popular and relevant hashtags. The caption should feel authentic and encourage viewers to interact by liking, commenting, or saving the post."
 }
 ```
 
@@ -307,6 +309,7 @@ GET /record/15
   
   ```json
   {
+    "record_id": integer,
     "image_id": integer,
     "sight_id": integer,
     "sight_name": "string",
@@ -328,4 +331,5 @@ The API uses standard HTTP status codes for indicating the success or failure of
 
 - `400 Bad Request`: The request was invalid. Check your input data.
 - `404 Not Found`: The requested resource could not be found.
+- `413 Payload Too Large`: The request payload is too large to be processed by the server.
 - `500 Internal Server Error`: An unexpected error occurred on the server.

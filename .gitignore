@@ -1,0 +1,11 @@
+# Ignore VSCode settings
+.vscode/
+
+# Ignore Datagrip settings
+.idea/
+
+# Ignore storage folder
+storage/
+
+# Ignore config file
+config.json
