@@ -45,11 +45,11 @@ func (s *Resolver) CreateRecord(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid sight ID", http.StatusBadRequest)
 			return
 		}
-		// Validate the sight id
+		// Validate the sight ID
 		sights, err := s.Conn.GetSights(r.Context())
 		if err != nil {
-			log.Println("Failed to validate sight id:", err)
-			http.Error(w, "Failed to validate sight id", http.StatusInternalServerError)
+			log.Println("Failed to validate sight ID:", err)
+			http.Error(w, "Failed to validate sight ID", http.StatusInternalServerError)
 			return
 		}
 		valid := false
@@ -61,8 +61,8 @@ func (s *Resolver) CreateRecord(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if !valid {
-			log.Println("Invalid sight id")
-			http.Error(w, "Invalid sight id", http.StatusBadRequest)
+			log.Println("Invalid sight ID")
+			http.Error(w, "Invalid sight ID", http.StatusBadRequest)
 			return
 		}
 	case sightName != "":
@@ -131,6 +131,20 @@ func (s *Resolver) GetRecord(w http.ResponseWriter, r *http.Request) {
 		log.Println("Record not found:", err)
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
+	}
+
+	// Override the sight name if the sight ID is valid
+	if record.SightID.Valid {
+		sightName, err := s.Conn.GetSightName(r.Context(), record.SightID.Int32)
+		if err != nil {
+			log.Println("Failed to get sight name:", err)
+			http.Error(w, "Failed to get sight name", http.StatusInternalServerError)
+			return
+		}
+		record.SightName = pgtype.Text{
+			String: sightName,
+			Valid:  true,
+		}
 	}
 
 	// Return the record as JSON

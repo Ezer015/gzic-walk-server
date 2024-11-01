@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"gzic-walk-server/cache"
 	"gzic-walk-server/config"
@@ -29,11 +29,11 @@ func main() {
 	}
 
 	// Connect to the database
-	conn, err := pgx.Connect(context.Background(), config.DatabaseURL)
+	conn, err := pgxpool.New(context.Background(), config.DatabaseURL)
 	if err != nil {
 		log.Fatalln("Unable to connect to database: ", err)
 	}
-	defer conn.Close(context.Background())
+	defer conn.Close()
 
 	// Initialize the resolver
 	s := &handlers.Resolver{
