@@ -16,3 +16,11 @@ SELECT
 FROM
     sights;
 
+-- name: GetSightName :one
+SELECT
+    sight_name
+FROM
+    sights
+WHERE
+    sight_id = $1;
+

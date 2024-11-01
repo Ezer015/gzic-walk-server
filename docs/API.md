@@ -87,8 +87,8 @@ GET /image/15
     "sights": [
       {
         "sight_id": "string",
-        "name": "string",
-        "description": "string"
+        "sight_name": "string",
+        "sight_description": "string"
       }
     ]
   }
@@ -120,8 +120,8 @@ GET /sight
   ```json
   {
     "sight_id": "string",
-    "name": "string",
-    "description": "string"
+    "sight_name": "string",
+    "sight_description": "string"
   }
   ```
 
@@ -220,11 +220,12 @@ GET /copywriting/15
 
 **Method:** `POST`  
 
-**Description:** Create random record including an image, sight, and copywriting.
+**Description:** Create record including an image, sight, and copywriting.
 
 **Request:**
 
 - **Headers:**
+  
   - `Content-Type: application/json`
 - **Body:**
   
@@ -244,7 +245,7 @@ GET /copywriting/15
   
   ```json
   {
-    "record_id": "string"
+    "record_id": integer
   }
   ```
 

@@ -93,7 +93,10 @@ func (s *Resolver) CreateRecord(w http.ResponseWriter, r *http.Request) {
 			Int32: int32(sightID),
 			Valid: sightIDStr != "",
 		},
-		SightName:   sightName,
+		SightName: pgtype.Text{
+			String: sightName,
+			Valid:  sightName != "",
+		},
 		Copywriting: copywriting,
 	}
 	recordID, err := s.Conn.CreateRecord(r.Context(), reqBody)
@@ -145,6 +148,20 @@ func (s *Resolver) GetRandomRecord(w http.ResponseWriter, r *http.Request) {
 		log.Println("Failed to get random record:", err)
 		http.Error(w, "Failed to get random record", http.StatusInternalServerError)
 		return
+	}
+
+	// Override the sight name if the sight ID is valid
+	if record.SightID.Valid {
+		sightName, err := s.Conn.GetSightName(r.Context(), record.SightID.Int32)
+		if err != nil {
+			log.Println("Failed to get sight name:", err)
+			http.Error(w, "Failed to get sight name", http.StatusInternalServerError)
+			return
+		}
+		record.SightName = pgtype.Text{
+			String: sightName,
+			Valid:  true,
+		}
 	}
 
 	// Return the record as JSON

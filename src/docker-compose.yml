@@ -6,7 +6,8 @@ services:
     environment:
       - CONFIG_PATH=/app/config.json
     volumes:
-      - ../storage:/app/storage
+      # Mounts the storage directory to the container
+      # - ../storage:/app/storage
       - ../config.json:/app/config.json
     depends_on:
       db:
@@ -21,6 +22,8 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      # Mounts test SQL script for initializing test data
+      # - ./database/test.sql:/docker-entrypoint-initdb.d/test.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s

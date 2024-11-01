@@ -9,3 +9,6 @@ storage/
 
 # Ignore config file
 config.json
+
+# Ignore test data file
+src/database/test.sql

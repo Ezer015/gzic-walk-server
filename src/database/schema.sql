@@ -15,7 +15,7 @@ CREATE TABLE records(
     record_id serial PRIMARY KEY,
     image_id integer REFERENCES images(image_id) NOT NULL,
     sight_id integer REFERENCES sights(sight_id),
-    sight_name text NOT NULL,
+    sight_name text,
     copywriting text NOT NULL,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

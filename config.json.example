@@ -1,6 +1,6 @@
 {
     "database_url": "postgres://postgres:postgres@db:5432/gzic_walk",
-    "storage_path": "../storage",
+    "storage_path": "./storage",
     "llm_config": {
         "url": "<your-endPoint>",
         "model": "<your-model>",

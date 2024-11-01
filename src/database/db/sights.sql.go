@@ -33,6 +33,22 @@ func (q *Queries) GetSight(ctx context.Context, sightID int32) (GetSightRow, err
 	return i, err
 }
 
+const getSightName = `-- name: GetSightName :one
+SELECT
+    sight_name
+FROM
+    sights
+WHERE
+    sight_id = $1
+`
+
+func (q *Queries) GetSightName(ctx context.Context, sightID int32) (string, error) {
+	row := q.db.QueryRow(ctx, getSightName, sightID)
+	var sight_name string
+	err := row.Scan(&sight_name)
+	return sight_name, err
+}
+
 const getSights = `-- name: GetSights :many
 SELECT
     sight_id,

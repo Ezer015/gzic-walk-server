@@ -18,7 +18,7 @@ type Record struct {
 	RecordID    int32            `json:"record_id"`
 	ImageID     int32            `json:"image_id"`
 	SightID     pgtype.Int4      `json:"sight_id"`
-	SightName   string           `json:"sight_name"`
+	SightName   pgtype.Text      `json:"sight_name"`
 	Copywriting string           `json:"copywriting"`
 	CreatedAt   pgtype.Timestamp `json:"created_at"`
 }
