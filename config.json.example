@@ -3,8 +3,9 @@
     "storage_path": "./storage",
     "llm_config": {
         "url": "<your-endPoint>",
+        "format": "openai",
         "model": "<your-model>",
         "token": "<your-token>",
-        "formatted_prompt": "Provide a direct response, focusing solely on the essential information without any additional prefixes or suffixes."
+        "system_prompt": "Provide a direct response, focusing solely on the essential information without any additional prefixes or suffixes."
     }
 }

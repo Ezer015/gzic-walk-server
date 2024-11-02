@@ -31,8 +31,8 @@ func (s *Resolver) UploadImage(w http.ResponseWriter, r *http.Request) {
 	file, _, err := r.FormFile("image")
 	if err != nil {
 		if err.Error() == "http: request body too large" {
-			log.Println("Image exceeds maximum file size")
-			http.Error(w, "Image exceeds maximum file size", http.StatusRequestEntityTooLarge)
+			log.Printf("Image exceeds maximum file size of %d bytes\n", maxFileSize)
+			http.Error(w, fmt.Sprintf("Image exceeds maximum file size of %d bytes", maxFileSize), http.StatusRequestEntityTooLarge)
 			return
 		}
 		log.Println("Error retrieving the image:", err)

@@ -5,16 +5,20 @@ import (
 	"errors"
 	"io"
 	"os"
+	"strings"
 )
+
+var llmFormats = [2]string{"openai", "ollama"}
 
 type Configuration struct {
 	DatabaseURL string `json:"database_url"`
 	StoragePath string `json:"storage_path"`
 	LLMConfig   struct {
-		Url             string `json:"url"`
-		Model           string `json:"model"`
-		Token           string `json:"token"`
-		FormattedPrompt string `json:"formatted_prompt"`
+		Url          string `json:"url"`
+		Format       string `json:"format"`
+		Model        string `json:"model"`
+		Token        string `json:"token"`
+		SystemPrompt string `json:"system_prompt"`
 	} `json:"llm_config"`
 }
 
@@ -49,10 +53,21 @@ func (c *Configuration) verify() error {
 		return errors.New("database_url cannot be empty")
 	case c.LLMConfig.Url == "":
 		return errors.New("llm_config.url cannot be empty")
+	case c.LLMConfig.Format == "":
+		return errors.New("llm_config.format cannot be empty")
+	case func() bool {
+		for _, format := range llmFormats {
+			if c.LLMConfig.Format == format {
+				return false
+			}
+		}
+		return true
+	}():
+		return errors.New("llm_config.format must be one of: " + strings.Join(llmFormats[:], ", "))
 	case c.LLMConfig.Model == "":
 		return errors.New("llm_config.model cannot be empty")
-	case c.LLMConfig.Token == "":
-		return errors.New("llm_config.token cannot be empty")
+	// case c.LLMConfig.Token == "":
+	// 	return errors.New("llm_config.token cannot be empty")
 	default:
 		return nil
 	}

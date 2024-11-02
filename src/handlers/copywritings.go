@@ -44,14 +44,15 @@ func (s *Resolver) CreateCopywriting(w http.ResponseWriter, r *http.Request) {
 			"messages": []map[string]any{
 				{
 					"role":    "system",
-					"content": fmt.Sprintf("%s\n%s", prompt, s.Config.LLMConfig.FormattedPrompt),
+					"content": fmt.Sprintf("%s\n%s", prompt, s.Config.LLMConfig.SystemPrompt),
 				},
 				{
 					"role":    "user",
 					"content": fmt.Sprintf("%s: %s", name, description),
 				},
 			},
-			"model": s.Config.LLMConfig.Model,
+			"stream": false,
+			"model":  s.Config.LLMConfig.Model,
 		})
 		if err != nil {
 			s.Caches.CopywritingCache.Remove(copywritingID)
@@ -67,7 +68,9 @@ func (s *Resolver) CreateCopywriting(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.Config.LLMConfig.Token))
+		if s.Config.LLMConfig.Token != "" {
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.Config.LLMConfig.Token))
+		}
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
@@ -93,28 +96,48 @@ func (s *Resolver) CreateCopywriting(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// Get the choices from the response
-		choices, ok := response["choices"].([]any)
-		if !ok {
-			log.Println("Error: 'choices' is not a valid []any")
-			return
-		}
-		if len(choices) == 0 {
-			log.Println("Error: 'choices' is empty")
-			return
-		}
-		choice, ok := choices[0].(map[string]any)
-		if !ok {
-			log.Println("Error: 'choice' is not a valid map[string]any")
-			return
-		}
-		message, ok := choice["message"].(map[string]any)
-		if !ok {
-			log.Println("Error: 'message' is not a valid map[string]any")
-			return
-		}
-		content, ok := message["content"].(string)
-		if !ok {
-			log.Println("Error: 'content' is not a valid string")
+		var content string
+		switch s.Config.LLMConfig.Format {
+		case "openai":
+			// OpenAI Format: {"choices": [{"message": {"content": "Hello, how can I help you?"}}]}
+			choices, ok := response["choices"].([]any)
+			if !ok {
+				log.Println("Error: 'choices' is not a valid []any")
+				return
+			}
+			if len(choices) == 0 {
+				log.Println("Error: 'choices' is empty")
+				return
+			}
+			choice, ok := choices[0].(map[string]any)
+			if !ok {
+				log.Println("Error: 'choice' is not a valid map[string]any")
+				return
+			}
+			message, ok := choice["message"].(map[string]any)
+			if !ok {
+				log.Println("Error: 'message' is not a valid map[string]any")
+				return
+			}
+			content, ok = message["content"].(string)
+			if !ok {
+				log.Println("Error: 'content' is not a valid string")
+				return
+			}
+		// Ollama Format: {"message": {"content": "Hello, how can I help you?"}}
+		case "ollama":
+			message, ok := response["message"].(map[string]any)
+			if !ok {
+				log.Println("Error: 'message' is not a valid map[string]any")
+				return
+			}
+			content, ok = message["content"].(string)
+			if !ok {
+				log.Println("Error: 'content' is not a valid string")
+				return
+			}
+		default:
+			log.Println("Error: invalid format")
 			return
 		}
 
